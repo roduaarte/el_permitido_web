@@ -1,167 +1,134 @@
 import streamlit as st
 import urllib.parse
 
-# Configuración de la página
 st.set_page_config(page_title="El Permitido", page_icon="🍦", layout="centered")
 
-# Colores personalizados
-st.markdown(
-    \"\"\"
+# Estilo visual personalizado
+st.markdown("""
     <style>
         body {
-            background-color: #000000;
-            color: #FFFFFF;
+            background-color: black;
+            color: #fff;
         }
-        .title {
-            color: #FF00FF;
+        .stApp {
+            background-color: black;
         }
-        .section {
-            color: #00FFFF;
+        h1, h2, h3, h4, h5, h6 {
+            color: #f72585;
         }
-        .highlight {
-            color: #39FF14;
+        .st-bb {
+            color: #7209b7;
+        }
+        .st-ef {
+            background-color: #3a0ca3;
         }
     </style>
-    \"\"\",
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
-# Logo
 st.image("logotipo.jpg", width=200)
 
-# Título y bienvenida
-st.markdown("<h1 class='title'>🍨 Bienvenidos a El Permitido</h1>", unsafe_allow_html=True)
+st.title("🍨 Bienvenidos a El Permitido")
 st.write("Disfrutá nuestros helados artesanales, tortas heladas y promos para compartir.")
 
-# Productos: Potes
-st.markdown("<h2 class='section'>📦 Elegí tus productos</h2>", unsafe_allow_html=True)
+st.header("\ud83d\udce6 Elegí tus productos")
 
-sabores = [
+# Productos principales
+productos = {
+    "Pote 1kg": st.checkbox("Pote 1kg"),
+    "Pote 1/2kg": st.checkbox("Pote 1/2kg"),
+    "Pote 1/4kg": st.checkbox("Pote 1/4kg"),
+    "Promo 1kg": st.checkbox("Promo 1kg"),
+    "Promo 1kg + 1/4": st.checkbox("Promo 1kg + 1/4"),
+    "Promo 1kg + 1/2": st.checkbox("Promo 1kg + 1/2"),
+    "Promo 2kg": st.checkbox("Promo 2kg"),
+    "Chocotorta": st.checkbox("Chocotorta"),
+    "Torta Mixta": st.checkbox("Torta Mixta"),
+    "Tiramisu": st.checkbox("Tiramisu"),
+    "3 conos": st.checkbox("3 conos - $1000"),
+    "6 conos": st.checkbox("6 conos - $1800"),
+    "6 vasitos": st.checkbox("6 vasitos - $1000"),
+    "12 vasitos": st.checkbox("12 vasitos - $1800"),
+}
+
+sabores_lista = [
     "americana", "dulce de leche", "ddl bombón", "súper dulce de leche", "ddl con nuez",
     "ddl granizado", "chocolate", "choco amargo", "choco shot", "choco suizo", "choco rocher",
-    "choco c/ almendras", "choco raffaello", "frambuesa", "frutilla al agua", "limón", "limón tropical",
-    "durazno", "vainilla", "mantecol", "mascarpone", "crema oreo", "frutilla a la crema", "pistacho",
-    "banana split", "tramontana", "granizado", "menta granizada"
+    "choco c/ almendras", "choco raffaello", "frambuesa", "frutilla al agua", "limón",
+    "limón tropical", "durazno", "vainilla", "mantecol", "mascarpone", "crema oreo",
+    "frutilla a la crema", "pistacho", "banana split", "tramontana", "granizado",
+    "menta granizada"
 ]
 
-productos = {
-    "Pote 1kg": {"check": st.checkbox("Pote 1kg ($7000)"), "max_sabores": 4, "precio": 7000},
-    "Pote 1/2kg": {"check": st.checkbox("Pote 1/2kg ($4000)"), "max_sabores": 3, "precio": 4000},
-    "Pote 1/4kg": {"check": st.checkbox("Pote 1/4kg ($2500)"), "max_sabores": 2, "precio": 2500},
-}
+sabores = {}
+if productos["Pote 1kg"]:
+    sabores["1kg"] = st.multiselect("Seleccioná hasta 4 sabores para el Pote 1kg", sabores_lista, max_selections=4)
+if productos["Pote 1/2kg"]:
+    sabores["1/2kg"] = st.multiselect("Seleccioná hasta 3 sabores para el Pote 1/2kg", sabores_lista, max_selections=3)
+if productos["Pote 1/4kg"]:
+    sabores["1/4kg"] = st.multiselect("Seleccioná hasta 2 sabores para el Pote 1/4kg", sabores_lista, max_selections=2)
 
-sabores_elegidos = {}
+pedido = [nombre for nombre, seleccionado in productos.items() if seleccionado]
 
-for nombre, data in productos.items():
-    if data["check"]:
-        sabores_selec = st.multiselect(f"Elegí hasta {data['max_sabores']} sabores para {nombre}", sabores, key=nombre)
-        if len(sabores_selec) > data["max_sabores"]:
-            st.warning(f"⚠️ Elegiste más de {data['max_sabores']} sabores para {nombre}. Por favor, corregí.")
-        sabores_elegidos[nombre] = sabores_selec
+if pedido:
+    st.subheader("📝 Tu pedido:")
+    for p in pedido:
+        st.write(f"- {p}")
+        if p in sabores:
+            for s in sabores[p.split()[1]]:
+                st.write(f"   - sabor: {s}")
 
-# Tortas heladas
-st.markdown("<h2 class='section'>🍰 Tortas Heladas</h2>", unsafe_allow_html=True)
-tortas = {
-    "Chocotorta ($20000)": 20000,
-    "Torta Mixta ($20000)": 20000,
-    "Tiramisu ($20000)": 20000
-}
-tortas_elegidas = [t for t in tortas if st.checkbox(t)]
+    # Formulario personalizado
+    with st.form("Datos del cliente"):
+        nombre = st.text_input("Nombre y apellido")
+        direccion = st.text_input("Dirección")
+        horario = st.text_input("Horario de entrega")
+        enviar = st.form_submit_button("Generar pedido")
 
-st.image("tortas heladas.jpg", use_container_width=True)
-
-# Promos
-st.markdown("<h2 class='section'>🎉 Promociones</h2>", unsafe_allow_html=True)
-promos = {
-    "Promo 1kg ($11500)": 11500,
-    "Promo 1kg + 1/4 ($16500)": 16500,
-    "Promo 1kg + 1/2 ($17500)": 17500,
-    "Promo 2kg ($22000)": 22000
-}
-promos_elegidas = [p for p in promos if st.checkbox(p)]
-
-st.image("sabores y precios.png", use_container_width=True)
-
-# Vasitos y conos
-st.markdown("<h2 class='section'>🍧 Vasitos y Conos</h2>", unsafe_allow_html=True)
-vasos_y_conos = {
-    "3 conos ($1000)": 1000,
-    "6 conos ($1800)": 1800,
-    "6 vasitos ($1000)": 1000,
-    "12 vasitos ($1800)": 1800
-}
-vasos_conos_elegidos = [v for v in vasos_y_conos if st.checkbox(v)]
-
-# Formulario adicional
-st.markdown("<h2 class='section'>📝 Información adicional</h2>", unsafe_allow_html=True)
-nombre = st.text_input("Tu nombre")
-direccion = st.text_input("Dirección de entrega")
-horario = st.text_input("Horario deseado")
+    if enviar:
+        mensaje = f"Hola! Soy {nombre}. Quiero pedir:\n" + "\n".join(f"- {p}" for p in pedido)
+        for key, lista_sabores in sabores.items():
+            if lista_sabores:
+                mensaje += f"\n  Sabores para {key}: {', '.join(lista_sabores)}"
+        mensaje += f"\nDirección: {direccion}\nHorario: {horario}"
+        url = "https://wa.me/5492304307444?text=" + urllib.parse.quote(mensaje)
+        st.markdown(f"[\ud83d\udcf2 Enviar pedido por WhatsApp]({url})", unsafe_allow_html=True)
+else:
+    st.info("Seleccioná al menos un producto para hacer tu pedido.")
 
 # Calculadora de precios
-total = 0
-for key, value in productos.items():
-    if value["check"]:
-        total += value["precio"]
-for t in tortas_elegidas:
-    total += tortas[t]
-for p in promos_elegidas:
-    total += promos[p]
-for v in vasos_conos_elegidos:
-    total += vasos_y_conos[v]
+precios = {
+    "Promo 1kg": 11500,
+    "Promo 1kg + 1/4": 16500,
+    "Promo 1kg + 1/2": 17500,
+    "Promo 2kg": 22000,
+    "3 conos": 1000,
+    "6 conos": 1800,
+    "6 vasitos": 1000,
+    "12 vasitos": 1800,
+}
 
-# Pedido resumen
-if st.button("📋 Ver pedido"):
-    st.markdown("<h2 class='highlight'>🧾 Tu pedido:</h2>", unsafe_allow_html=True)
+total = sum(precios[p] for p in pedido if p in precios)
+if total:
+    st.success(f"Total estimado: ${total}")
 
-    for key, value in sabores_elegidos.items():
-        if value:
-            st.write(f"- {key}: {', '.join(value)}")
-    for t in tortas_elegidas:
-        st.write(f"- {t}")
-    for p in promos_elegidas:
-        st.write(f"- {p}")
-    for v in vasos_conos_elegidos:
-        st.write(f"- {v}")
-    
-    if nombre or direccion or horario:
-        st.markdown("**🧍 Datos personales:**")
-        st.write(f"Nombre: {nombre}")
-        st.write(f"Dirección: {direccion}")
-        st.write(f"Horario: {horario}")
+st.subheader("\ud83c\udf88 Promociones")
+st.image("sabores y precios.png", caption="Promos y sabores", use_container_width=True)
 
-    st.success(f"💵 Total: ${total}")
+st.subheader("\ud83c\udf70 Tortas Heladas")
+st.image("tortas heladas.jpg", caption="Nuestras tortas", use_container_width=True)
 
-    # Mensaje para WhatsApp
-    mensaje = "Hola! Quiero hacer un pedido:\\n"
-    for key, value in sabores_elegidos.items():
-        if value:
-            mensaje += f"- {key}: {', '.join(value)}\\n"
-    for t in tortas_elegidas:
-        mensaje += f"- {t}\\n"
-    for p in promos_elegidas:
-        mensaje += f"- {p}\\n"
-    for v in vasos_conos_elegidos:
-        mensaje += f"- {v}\\n"
-    if nombre:
-        mensaje += f"Nombre: {nombre}\\n"
-    if direccion:
-        mensaje += f"Dirección: {direccion}\\n"
-    if horario:
-        mensaje += f"Horario: {horario}\\n"
-    mensaje += f"Total: ${total}"
-    
-    url = "https://wa.me/5492304307444?text=" + urllib.parse.quote(mensaje)
-    st.markdown(f"[📲 Enviar pedido por WhatsApp]({url})", unsafe_allow_html=True)
+# Botones redes sociales
+st.markdown("""
+**Instagram:** [@heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)
+""")
 
-# Redes sociales
-st.markdown("<h2 class='section'>📱 Seguinos</h2>", unsafe_allow_html=True)
-st.markdown("[Instagram](https://www.instagram.com/heladeria.elpermitido/)")
+# Opiniones
+st.subheader("⭐ Valoraciones")
+st.text_area("Dejanos tu opinión")
 
-# Pie de página
+# Ubicación
+st.subheader("📍 Dónde estamos")
+st.map(data=None)  # Podés cargar coordenadas si querés una ubicación real
+
 st.markdown("---")
 st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
-'''
-
-codigo_actualizado
-
