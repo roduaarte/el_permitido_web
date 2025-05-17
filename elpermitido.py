@@ -107,9 +107,9 @@ else:
 
 # Calculadora de precios
 precios = {
-    "Pote 1kg": 11000
-    "Pote 1/2kg": 7000
-    "Pote 1/4kg": 5500
+    "Pote 1kg": 11000,
+    "Pote 1/2kg": 7000,
+    "Pote 1/4kg": 5500,
     "Promo 1kg": 11500,
     "Promo 1kg + 1/4": 16500,
     "Promo 1kg + 1/2": 17500,
