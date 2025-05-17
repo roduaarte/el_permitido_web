@@ -3,7 +3,7 @@ import urllib.parse
 
 st.set_page_config(page_title="El Permitido", page_icon="🍦", layout="centered")
 
-st.image("imagenes/logotipo.jpg", width=200)
+st.image("logotipo.jpg", width=200)
 
 st.title("🍨 Bienvenidos a El Permitido")
 st.write("Disfrutá nuestros helados artesanales, tortas heladas y promos para compartir.")
@@ -35,7 +35,7 @@ else:
     st.info("Seleccioná al menos un producto para hacer tu pedido.")
 
 st.subheader("🎉 Promociones")
-st.image("imagenes/promociones.png", caption="Promos de la semana", use_column_width=True)
+st.image("promociones.png", caption="Promos de la semana", use_column_width=True)
 
 st.subheader("📞 Contacto")
 st.markdown("""
