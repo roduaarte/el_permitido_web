@@ -56,6 +56,7 @@ st.header("📦 Elegí tu TORTA HELADA")
 # Productos principales
 productos.update({
     "Chocotorta": st.checkbox("Chocotorta"),
+    "Torta Oreo":st.checkbox("Torta Oreo"),
     "Torta Mixta": st.checkbox("Torta Mixta"),
     "Tiramisu": st.checkbox("Tiramisu"),
 })
@@ -91,7 +92,6 @@ if pedido:
     with st.form("Datos del cliente"):
         nombre = st.text_input("Nombre y apellido")
         direccion = st.text_input("Dirección")
-        horario = st.text_input("Horario de entrega")
         enviar = st.form_submit_button("Generar pedido")
 
     if enviar:
@@ -107,6 +107,9 @@ else:
 
 # Calculadora de precios
 precios = {
+    "Pote 1kg": 11000
+    "Pote 1/2kg": 7000
+    "Pote 1/4kg": 5500
     "Promo 1kg": 11500,
     "Promo 1kg + 1/4": 16500,
     "Promo 1kg + 1/2": 17500,
@@ -121,7 +124,7 @@ total = sum(precios[p] for p in pedido if p in precios)
 if total:
     st.success(f"Total estimado: ${total}")
 
-st.subheader("\ud83c\udf88 Promociones")
+st.subheader("🎈 Promociones")
 st.image("sabores y precios.png", caption="Promos y sabores", use_container_width=True)
 
 st.subheader("\ud83c\udf70 Tortas Heladas")
