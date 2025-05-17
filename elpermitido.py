@@ -124,10 +124,10 @@ total = sum(precios[p] for p in pedido if p in precios)
 if total:
     st.success(f"Total estimado: ${total}")
 
-st.subheader("🎈 Promociones")
+st.subheader("🎈 Sabores")
 st.image("sabores y precios.png", caption="Promos y sabores", use_container_width=True)
 
-st.subheader("\ud83c\udf70 Tortas Heladas")
+st.subheader("🍰 Tortas Heladas")
 st.image("tortas heladas.jpg", caption="Nuestras tortas", use_container_width=True)
 
 # Botones redes sociales
