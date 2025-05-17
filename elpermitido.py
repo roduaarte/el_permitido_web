@@ -30,24 +30,29 @@ st.image("logotipo.jpg", width=200)
 st.title("🍨 Bienvenidos a El Permitido")
 st.write("Disfrutá nuestros helados artesanales, tortas heladas y promos para compartir.")
 
-st.header("\ud83d\udce6 Elegí tus productos")
+st.header("📦 Elegí tus Sabores") 
 
 # Productos principales
 productos = {
     "Pote 1kg": st.checkbox("Pote 1kg"),
     "Pote 1/2kg": st.checkbox("Pote 1/2kg"),
     "Pote 1/4kg": st.checkbox("Pote 1/4kg"),
+"3 conos": st.checkbox("3 conos - $1000"),
+    "6 conos": st.checkbox("6 conos - $1800"),
+    "6 vasitos": st.checkbox("6 vasitos - $1000"),
+    "12 vasitos": st.checkbox("12 vasitos - $1800"),
+st.header("📦 Elegí tu Promo") 
+# Productos principales
     "Promo 1kg": st.checkbox("Promo 1kg"),
     "Promo 1kg + 1/4": st.checkbox("Promo 1kg + 1/4"),
     "Promo 1kg + 1/2": st.checkbox("Promo 1kg + 1/2"),
     "Promo 2kg": st.checkbox("Promo 2kg"),
+st.header("📦 Elegí tu TORTA HELADA") 
+# Productos principales
     "Chocotorta": st.checkbox("Chocotorta"),
     "Torta Mixta": st.checkbox("Torta Mixta"),
     "Tiramisu": st.checkbox("Tiramisu"),
-    "3 conos": st.checkbox("3 conos - $1000"),
-    "6 conos": st.checkbox("6 conos - $1800"),
-    "6 vasitos": st.checkbox("6 vasitos - $1000"),
-    "12 vasitos": st.checkbox("12 vasitos - $1800"),
+   
 }
 
 sabores_lista = [
