@@ -1,6 +1,6 @@
 import streamlit as st
 import urllib.parse
-import pandas as pd
+import pydeck as pdk
 
 st.set_page_config(page_title="El Permitido", page_icon="🍦", layout="centered")
 
@@ -138,14 +138,28 @@ st.markdown("""
 st.subheader("⭐ Valoraciones")
 st.text_area("Dejanos tu opinión")
 
-# Ubicación
 st.subheader("📍 Dónde estamos")
 
-# Coordenadas de la heladería
-ubicacion = pd.DataFrame({
-    'lat': [-34.4599],
-    'lon': [-58.9145]
-})
+st.pydeck_chart(pdk.Deck(
+    map_style='mapbox://styles/mapbox/streets-v11',
+    initial_view_state=pdk.ViewState(
+        latitude=-34.4661085,
+        longitude=-58.9037148,
+        zoom=17,
+        pitch=0,
+    ),
+    layers=[
+        pdk.Layer(
+            'ScatterplotLayer',
+            data=ubicacion,
+            get_position='[lon, lat]',
+            get_color='[200, 30, 0, 160]',
+            get_radius=20,
+        ),
+    ],
+))
+
+st.write("📌 San Luis 208, Pilar Centro, Provincia de Buenos Aires")
 
 st.markdown("---")
 st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
