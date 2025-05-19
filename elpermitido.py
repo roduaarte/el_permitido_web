@@ -1,165 +1,140 @@
 import streamlit as st
+import os
+from PIL import Image
 import urllib.parse
-import pydeck as pdk
 
-st.set_page_config(page_title="El Permitido", page_icon="🍦", layout="centered")
+# Configuración inicial
+st.set_page_config(page_title="Pedidos Online - Helados", layout="centered")
 
-# Estilo visual personalizado
+# Estilos
 st.markdown("""
     <style>
         body {
-            background-color: black;
-            color: #fff;
+            background-color: #f5f5f5;
         }
-        .stApp {
-            background-color: black;
+        .title {
+            color: #4a4a4a;
+            text-align: center;
         }
-        h1, h2, h3, h4, h5, h6 {
-            color: #f72585;
-        }
-        .st-bb {
-            color: #7209b7;
-        }
-        .st-ef {
-            background-color: #3a0ca3;
+        .footer {
+            font-size: 12px;
+            text-align: center;
+            color: #888;
+            margin-top: 50px;
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.image("logotipo.jpg", width=200)
-
-st.title("🍨 Bienvenidos a El Permitido")
-st.write("Disfrutá nuestros helados artesanales, tortas heladas y promos para compartir.")
-
-st.header("📦 Elegí tus Sabores")
-
-productos = {
-    "Pote 1kg": st.checkbox("Pote 1kg"),
-    "Pote 1/2kg": st.checkbox("Pote 1/2kg"),
-    "Pote 1/4kg": st.checkbox("Pote 1/4kg"),
-    "3 conos": st.checkbox("3 conos - $1000"),
-    "6 conos": st.checkbox("6 conos - $1800"),
-    "6 vasitos": st.checkbox("6 vasitos - $1000"),
-    "12 vasitos": st.checkbox("12 vasitos - $1800"),
-}
-
-st.header("📦 Elegí tu Promo")
-productos.update({
-    "Promo 1kg": st.checkbox("Promo 1kg"),
-    "Promo 1kg + 1/4": st.checkbox("Promo 1kg + 1/4"),
-    "Promo 1kg + 1/2": st.checkbox("Promo 1kg + 1/2"),
-    "Promo 2kg": st.checkbox("Promo 2kg"),
-})
-
-st.header("🍰 Elegí tu TORTA HELADA")
-productos.update({
-    "Chocotorta": st.checkbox("Chocotorta"),
-    "Torta Oreo": st.checkbox("Torta Oreo"),
-    "Torta Mixta": st.checkbox("Torta Mixta"),
-    "Tiramisu": st.checkbox("Tiramisu"),
-})
-
-sabores_lista = [
-    "americana", "dulce de leche", "ddl bombón", "súper dulce de leche", "ddl con nuez",
-    "ddl granizado", "chocolate", "choco amargo", "choco shot", "choco suizo", "choco rocher",
-    "choco c/ almendras", "choco raffaello", "frambuesa", "frutilla al agua", "limón",
-    "limón tropical", "durazno", "vainilla", "mantecol", "mascarpone", "crema oreo",
-    "frutilla a la crema", "pistacho", "banana split", "tramontana", "granizado",
-    "menta granizada"
-]
-
-sabores = {}
-if productos["Pote 1kg"]:
-    sabores["1kg"] = st.multiselect("Seleccioná hasta 4 sabores para el Pote 1kg", sabores_lista, max_selections=4)
-if productos["Pote 1/2kg"]:
-    sabores["1/2kg"] = st.multiselect("Seleccioná hasta 3 sabores para el Pote 1/2kg", sabores_lista, max_selections=3)
-if productos["Pote 1/4kg"]:
-    sabores["1/4kg"] = st.multiselect("Seleccioná hasta 2 sabores para el Pote 1/4kg", sabores_lista, max_selections=2)
-
-pedido = [nombre for nombre, seleccionado in productos.items() if seleccionado]
-
-if pedido:
-    st.subheader("📝 Tu pedido:")
-    for p in pedido:
-        st.write(f"- {p}")
-        if p in sabores:
-            for s in sabores[p.split()[1]]:
-                st.write(f"   - sabor: {s}")
-
-    # Formulario personalizado
-    with st.form("Datos del cliente"):
-        nombre = st.text_input("Nombre y apellido")
-        direccion = st.text_input("Dirección")
-        horario = st.text_input("Horario estimado de entrega")
-        enviar = st.form_submit_button("Generar pedido")
-
-    if enviar:
-        mensaje = f"Hola! Soy {nombre}. Quiero pedir:\n" + "\n".join(f"- {p}" for p in pedido)
-        for key, lista_sabores in sabores.items():
-            if lista_sabores:
-                mensaje += f"\n  Sabores para {key}: {', '.join(lista_sabores)}"
-        mensaje += f"\nDirección: {direccion}\nHorario: {horario}"
-        url = "https://wa.me/5492304307444?text=" + urllib.parse.quote(mensaje)
-        st.markdown(f"[📱 Enviar pedido por WhatsApp]({url})", unsafe_allow_html=True)
+# Logo
+if os.path.exists("logotipo.jpg"):
+    st.image("logotipo.jpg", width=200)
 else:
-    st.info("Seleccioná al menos un producto para hacer tu pedido.")
+    st.warning("⚠️ Falta la imagen 'logotipo.jpg'")
 
-# Calculadora de precios
-precios = {
-    "Pote 1kg": 11000,
-    "Pote 1/2kg": 7000,
-    "Pote 1/4kg": 5500,
-    "Promo 1kg": 11500,
-    "Promo 1kg + 1/4": 16500,
-    "Promo 1kg + 1/2": 17500,
-    "Promo 2kg": 22000,
-    "3 conos": 1000,
-    "6 conos": 1800,
-    "6 vasitos": 1000,
-    "12 vasitos": 1800,
+st.title("📦 Hacé tu pedido de helado")
+
+# Productos
+st.header("🍨 Elegí tus productos")
+
+helados = {
+    "¼ kg": 1300,
+    "½ kg": 2200,
+    "1 kg": 3900,
 }
 
-total = sum(precios[p] for p in pedido if p in precios)
-if total:
-    st.success(f"Total estimado: ${total}")
+conos = {
+    "Cono simple": 600,
+    "Cono doble": 1000,
+}
 
-st.subheader("🎈 Sabores")
-st.image("sabores y precios.png", caption="Promos y sabores", use_container_width=True)
+promos = {
+    "Promo 2 potes de 1 kg": 7200,
+    "Promo 1 pote de 1 kg + 1 de ½ kg": 5900,
+}
 
-st.subheader("🍰 Tortas Heladas")
-st.image("tortas heladas.jpg", caption="Nuestras tortas", use_container_width=True)
+vasitos = {
+    "Vasito chico": 500,
+    "Vasito mediano": 700,
+    "Vasito grande": 1000,
+}
 
-# Botones redes sociales
-st.markdown("""
-**Instagram:** [@heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)
-""")
+tortas = {
+    "Torta helada chica": 4000,
+    "Torta helada grande": 7000,
+}
 
-# Opiniones
-st.subheader("⭐ Valoraciones")
-st.text_area("Dejanos tu opinión")
+sabores = {
+    "¼": ["Dulce de leche", "Chocolate", "Frutilla", "Granizado", "Vainilla"],
+    "½": ["Dulce de leche", "Chocolate", "Frutilla", "Granizado", "Vainilla", "Tramontana", "Cookies"],
+    "1": ["Dulce de leche", "Chocolate", "Frutilla", "Granizado", "Vainilla", "Tramontana", "Cookies", "Marroc", "Frutos rojos"],
+}
 
-st.subheader("📍 Dónde estamos")
+pedido = []
+total = 0
 
-st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/streets-v11',
-    initial_view_state=pdk.ViewState(
-        latitude=-34.4661085,
-        longitude=-58.9037148,
-        zoom=17,
-        pitch=0,
-    ),
-    layers=[
-        pdk.Layer(
-            'ScatterplotLayer',
-            data=ubicacion,
-            get_position='[lon, lat]',
-            get_color='[200, 30, 0, 160]',
-            get_radius=20,
-        ),
-    ],
-))
+# Selección de helados
+st.subheader("Helados:")
+for nombre, precio in helados.items():
+    if st.checkbox(f"{nombre} - ${precio}"):
+        pedido.append(nombre)
+        cant_sabores = 1 if "¼" in nombre else (2 if "½" in nombre else 3)
+        seleccionados = st.multiselect(f"Elegí {cant_sabores} sabor(es) para {nombre}", sabores[nombre.split()[0].replace("kg", "")], max_selections=cant_sabores)
+        pedido.extend(seleccionados)
+        total += precio
 
-st.write("📌 San Luis 208, Pilar Centro, Provincia de Buenos Aires")
+# Conos
+st.subheader("Conos:")
+for nombre, precio in conos.items():
+    if st.checkbox(f"{nombre} - ${precio}"):
+        pedido.append(nombre)
+        total += precio
 
-st.markdown("---")
-st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
+# Promos
+st.subheader("Promociones:")
+for nombre, precio in promos.items():
+    if st.checkbox(f"{nombre} - ${precio}"):
+        pedido.append(nombre)
+        total += precio
+
+# Vasitos
+st.subheader("Vasitos:")
+for nombre, precio in vasitos.items():
+    if st.checkbox(f"{nombre} - ${precio}"):
+        pedido.append(nombre)
+        total += precio
+
+# Tortas
+st.subheader("Tortas heladas:")
+for nombre, precio in tortas.items():
+    if st.checkbox(f"{nombre} - ${precio}"):
+        pedido.append(nombre)
+        total += precio
+
+# Mostrar imágenes de productos
+st.subheader("📸 Imágenes de productos:")
+if os.path.exists("sabores y precios.png"):
+    st.image("sabores y precios.png", caption="Sabores y precios")
+else:
+    st.warning("⚠️ Falta la imagen 'sabores y precios.png'")
+
+if os.path.exists("tortas heladas.jpg"):
+    st.image("tortas heladas.jpg", caption="Tortas heladas")
+else:
+    st.warning("⚠️ Falta la imagen 'tortas heladas.jpg'")
+
+# Mostrar pedido
+if pedido:
+    st.subheader("🧾 Pedido actual:")
+    st.write(pedido)
+    st.success(f"💰 Total estimado: ${total}")
+
+# Datos del cliente
+st.header("📝 Completá tus datos")
+nombre = st.text_input("Tu nombre")
+direccion = st.text_input("Dirección")
+horario = st.text_input("Horario deseado de entrega")
+
+# WhatsApp
+if st.button("📲 Enviar pedido por WhatsApp"):
+    if nombre and direccion and horario and pedido:
+        mensaje = f"Hola,
