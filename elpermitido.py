@@ -46,18 +46,18 @@ productos = {
 
 st.header("📦 Elegí tu Promo")
 productos.update({
-    "Promo 1kg": st.checkbox("Promo 1kg" + 6 vasitos),
-    "Promo 1kg + 1/4": st.checkbox("Promo 1kg + 1/4" + 6 vasitos),
-    "Promo 1kg + 1/2": st.checkbox("Promo 1kg + 1/2" + 6 vasitos),
-    "Promo 2kg": st.checkbox("Promo 2kg" + 12 vasitos),
+    "Promo 1kg": st.checkbox("Promo 1kg - $11500"),
+    "Promo 1kg + 1/4": st.checkbox("Promo 1kg + 1/4 - $16500"),
+    "Promo 1kg + 1/2": st.checkbox("Promo 1kg + 1/2 - $17500"),
+    "Promo 2kg": st.checkbox("Promo 2kg - $22000"),
 })
 
 st.header("🍰 Elegí tu TORTA HELADA")
 productos.update({
-    "Chocotorta": st.checkbox("Chocotorta"),
-    "Torta Oreo": st.checkbox("Torta Oreo"),
-    "Torta Mixta": st.checkbox("Torta Mixta"),
-    "Tiramisu": st.checkbox("Tiramisu"),
+    "Chocotorta": st.checkbox("Chocotorta - $2800"),
+    "Torta Oreo": st.checkbox("Torta Oreo - $3000"),
+    "Torta Mixta": st.checkbox("Torta Mixta - $3500"),
+    "Tiramisu": st.checkbox("Tiramisu - $3300"),
 })
 
 sabores_lista = [
