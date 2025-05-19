@@ -37,7 +37,7 @@ st.header("📦 Elegí tus Sabores")
 productos = {
     "Pote 1kg": st.checkbox("Pote 1kg - $11000"),
     "Pote 1/2kg": st.checkbox("Pote 1/2kg - $7000"),
-    "Pote 1/4kg": st.checkbox("Pote 1/4kg - $5500"),
+    "Pote 1/4kg": st.checkbox("Pote 1/4kg - $5000"),
     "3 conos": st.checkbox("3 conos - $1000"),
     "6 conos": st.checkbox("6 conos - $1800"),
     "6 vasitos": st.checkbox("6 vasitos - $1000"),
