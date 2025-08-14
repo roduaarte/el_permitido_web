@@ -48,7 +48,8 @@ SABORES_LISTA = [
 ]
 
 # --- Estilo Visual (CSS con Fuentes y Colores Personalizados) ---
-st.markdown("""
+# Se utiliza st.html para una carga más robusta de las fuentes y estilos.
+st.html("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Pacifico&display=swap');
 
@@ -57,30 +58,25 @@ st.markdown("""
             --font-kawthar-like: 'Pacifico', cursive;
             --font-lucidity-like: 'Oswald', sans-serif;
             --color-deeppink: #FF1493;
-            --color-purple: #8A2BE2; /* Un morado más vibrante (BlueViolet) */
+            --color-purple: #8A2BE2; /* BlueViolet */
         }
 
+        /* Estilo general del cuerpo y la fuente */
         .stApp {
             background-image: linear-gradient(to right top, #fdd5e2, #e6d9f1, #d5def9, #cde2fb, #d0e5f9);
-            font-family: var(--font-lucidity-like);
-            color: var(--color-purple);
         }
-
-        /* Estilos para Títulos Principales */
-        .main-title, .section-title {
-            font-family: var(--font-kawthar-like);
-            color: var(--color-deeppink);
+        
+        /* Estilos aplicados globalmente a los elementos de Streamlit */
+        h1, h2, h3 {
+            font-family: var(--font-kawthar-like) !important;
+            color: var(--color-deeppink) !important;
             text-align: center;
         }
-        .main-title { font-size: 3.5rem; }
-        .section-title { font-size: 2.5rem; }
 
-        /* Estilo para Subtítulos y Texto General */
-        .subtitle, p, .st-emotion-cache-16txtl3 label, .st-emotion-cache-1r4qj8v label {
-            font-family: var(--font-lucidity-like);
+        p, label, .st-emotion-cache-16txtl3, .st-emotion-cache-1r4qj8v {
+            font-family: var(--font-lucidity-like) !important;
             color: var(--color-purple) !important;
         }
-        .subtitle { font-size: 1.2rem; text-align: center; }
 
         /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
@@ -108,22 +104,21 @@ st.markdown("""
             transform: scale(1.05);
         }
     </style>
-""", unsafe_allow_html=True)
+""")
 
 
 # --- Encabezado ---
-col1, col2 = st.columns([1, 5])
+col1, col2 = st.columns([1, 3]) # Columnas ajustadas para mejor proporción
 with col1:
-    st.image("logotipo.jpg", width=120)
+    st.image("logotipo.jpg", width=180) # Tamaño del logo aumentado
 with col2:
-    st.markdown('<h1 class="main-title">Bienvenidos a El Permitido!</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">Helados artesanales, tortas y las mejores promos para vos!</p>', unsafe_allow_html=True)
+    st.title("Bienvenidos a El Permitido!")
+    st.subheader("Helados artesanales, tortas y las mejores promos para vos!")
 
 st.markdown("---")
 
 # --- Promo del Día ---
 def mostrar_promo_del_dia():
-    # (La lógica interna de la función no cambia)
     try:
         tz = pytz.timezone('America/Argentina/Buenos_Aires')
         now = datetime.now(tz)
@@ -152,8 +147,8 @@ def mostrar_promo_del_dia():
             promo_message = "Agendalo: este Miércoles y Jueves vuelve el Happy Hour con **15% OFF** (de 17:00 a 20:30hs)."
 
         with st.container(border=True):
-            st.markdown(f'<h2 class="section-title">{promo_title}</h2>', unsafe_allow_html=True)
-            st.markdown(f'<p class="subtitle" style="text-align:center;">{promo_message}</p>', unsafe_allow_html=True)
+            st.header(promo_title)
+            st.write(promo_message)
     except Exception as e:
         st.error(f"No se pudo cargar la promo del día: {e}")
 
@@ -162,8 +157,8 @@ st.markdown("---")
 
 # --- Ruleta de Sabores ---
 with st.container(border=True):
-    st.markdown('<h2 class="section-title">🎡 ¡Ruleta de Sabores!</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>', unsafe_allow_html=True)
+    st.header("🎡 ¡Ruleta de Sabores!")
+    st.write("¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!")
     if st.button("¡Girar la Ruleta!"):
         with st.spinner("Eligiendo un sabor increíble... 🌀"):
             time.sleep(1.5)
@@ -174,13 +169,12 @@ with st.container(border=True):
 st.markdown("---")
 
 # --- Selección de Productos ---
-st.markdown('<h2 class="section-title">📦 Armá tu Pedido</h2>', unsafe_allow_html=True)
+st.header("📦 Armá tu Pedido")
 pedido_seleccionado = {}
 
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
-    st.markdown('<h3 class="section-title" style="font-size: 2rem;">Nuestras Tortas Heladas</h3>', unsafe_allow_html=True)
-    st.markdown('<p class="subtitle" style="margin-top:-15px;">($20.000 c/u)</p>', unsafe_allow_html=True)
+    st.subheader("Nuestras Tortas Heladas - ($20.000 c/u)")
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
@@ -193,26 +187,25 @@ with st.container(border=True):
 col1, col2 = st.columns(2)
 with col1:
     with st.container(border=True):
-        st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Potes de Helado</h3>', unsafe_allow_html=True)
+        st.subheader("Potes de Helado")
         for nombre, precio in PRODUCTOS["Potes de Helado"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
     
 with col2:
     with st.container(border=True):
-        st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Promos</h3>', unsafe_allow_html=True)
+        st.subheader("Promos")
         for nombre, precio in PRODUCTOS["Promos para Compartir"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
 
 with st.container(border=True):
-    st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Extras</h3>', unsafe_allow_html=True)
+    st.subheader("Extras")
     for nombre, precio in PRODUCTOS["Extras (Conos y Vasitos)"].items():
         if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
             pedido_seleccionado[nombre] = precio
 
 # --- Selección de Sabores (si aplica) ---
-# (La lógica interna no cambia)
 sabores_elegidos = {}
 if "Pote 1kg" in pedido_seleccionado:
     with st.expander("🍦 Elegí hasta 4 sabores para tu Pote de 1kg", expanded=True):
@@ -227,11 +220,11 @@ if "Pote 1/4kg" in pedido_seleccionado:
 # --- Resumen y Formulario de Pedido ---
 if pedido_seleccionado:
     st.markdown("---")
-    st.markdown('<h2 class="section-title">📝 Resumen y Envío</h2>', unsafe_allow_html=True)
+    st.header("📝 Resumen y Envío")
     
     total = sum(pedido_seleccionado.values())
 
-    st.markdown(f"### Tu selección:")
+    st.subheader("Tu selección:")
     for nombre, precio in pedido_seleccionado.items():
         st.write(f"- {nombre}: ${precio:,}")
         if nombre == "Pote 1kg" and sabores_elegidos.get("1kg"):
@@ -241,7 +234,7 @@ if pedido_seleccionado:
         elif nombre == "Pote 1/4kg" and sabores_elegidos.get("1/4kg"):
             st.caption(f"   Sabores: {', '.join(sabores_elegidos['1/4kg'])}")
 
-    st.markdown(f"### Total a pagar: ${total:,}")
+    st.subheader(f"Total a pagar: ${total:,}")
     st.info("Recordá que el envío es GRATIS dentro de los 4km a la redonda.")
 
     with st.form("Datos del cliente"):
@@ -256,7 +249,6 @@ if pedido_seleccionado:
             if not nombre_cliente or not direccion_cliente:
                 st.error("Por favor, completá tu nombre y dirección.")
             else:
-                # (La lógica de creación del mensaje no cambia)
                 mensaje_parts = [f"Hola! Soy {nombre_cliente}. Quiero hacer un pedido:"]
                 for producto in pedido_seleccionado:
                     mensaje_parts.append(f"- {producto}")
@@ -278,7 +270,7 @@ if pedido_seleccionado:
 
 # --- Secciones Adicionales ---
 st.markdown("---")
-st.markdown('<h2 class="section-title">📍 Dónde Encontrarnos y Contacto</h2>', unsafe_allow_html=True)
+st.header("📍 Dónde Encontrarnos y Contacto")
 
 col1, col2 = st.columns([2,1])
 with col1:
@@ -289,13 +281,13 @@ with col1:
         tooltip={"text": "El Permitido Heladería - Pilar Centro"}
     ))
 with col2:
-    st.markdown("#### Estamos en:")
-    st.markdown("### 📌 Pilar Centro")
-    st.markdown("##### (Calle La Pampa)")
+    st.subheader("Estamos en:")
+    st.write("#### 📌 Pilar Centro")
+    st.write("##### (Calle La Pampa)")
     st.markdown("---")
-    st.markdown("#### Contactanos:")
-    st.markdown("##### 📱 [**WhatsApp: 230-4307444**](https://wa.me/5492304307444)")
-    st.markdown("##### 📸 [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
+    st.subheader("Contactanos:")
+    st.write("##### 📱 [**WhatsApp: 230-4307444**](https://wa.me/5492304307444)")
+    st.write("##### 📸 [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
 
 st.markdown("---")
-st.markdown('<p class="subtitle" style="text-align:center;">© 2025 El Permitido - Todos los derechos reservados.</p>', unsafe_allow_html=True)
+st.write("© 2025 El Permitido - Todos los derechos reservados.")
