@@ -72,6 +72,25 @@ st.html("""
         .font-ribeye { font-family: var(--font-ribeye) !important; color: var(--color-deeppink); }
         .font-delius { font-family: var(--font-delius) !important; color: var(--color-purple); }
 
+        /* --- ESTILOS GLOBALES PARA WIDGETS Y TEXTO --- */
+        p, div[data-testid="stExpander"] p {
+             font-family: var(--font-delius) !important;
+             color: var(--color-purple) !important;
+             font-size: 1.2rem !important;
+        }
+        
+        /* Estilo para etiquetas de todos los widgets, usando selectores más estables */
+        div[data-testid="stCheckbox"] label, 
+        div[data-testid="stTextInput"] label, 
+        div[data-testid="stSelectbox"] label,
+        div[data-testid="stMultiSelect"] label,
+        div[data-testid="stExpander"] summary
+        {
+            font-family: var(--font-delius) !important;
+            color: var(--color-purple) !important;
+            font-size: 1.7rem !important; /* TAMAÑO AUMENTADO COMO SE SOLICITÓ */
+        }
+
         /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
              background-color: rgba(255, 255, 255, 0.7);
@@ -97,13 +116,6 @@ st.html("""
         .stButton>button:hover {
             background-color: var(--color-purple);
             transform: scale(1.05);
-        }
-        
-        /* Aplicar fuente secundaria a las etiquetas de los checkboxes y otros elementos */
-        label, .st-emotion-cache-1y4p8pa, .st-emotion-cache-zz6sex, .st-emotion-cache-10trblm {
-            font-family: var(--font-delius) !important;
-            color: var(--color-purple) !important;
-            font-size: 1.1rem !important;
         }
     </style>
 """)
@@ -284,10 +296,10 @@ with col1:
         tooltip={"text": "El Permitido Heladería - Pilar Centro"}
     ))
 with col2:
-    st.html('<h3 class="font-ribeye" style="font-size: 2.2rem;">Estamos en:</h3>')
+    st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Estamos en:</h3>')
     st.html('<p class="font-delius" style="font-size: 1.5rem;">📌 Pilar Centro (Calle La Pampa)</p>')
     st.markdown("---")
-    st.html('<h3 class="font-ribeye" style="font-size: 2.2rem;">Contactanos:</h3>')
+    st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Contactanos:</h3>')
     st.html('<p class="font-delius" style="font-size: 1.2rem;">📱 <a href="https://wa.me/5492304307444" target="_blank">WhatsApp: 230-4307444</a></p>')
     st.html('<p class="font-delius" style="font-size: 1.2rem;">📸 <a href="https://www.instagram.com/heladeria.elpermitido" target="_blank">Instagram: @heladeria.elpermitido</a></p>')
 
