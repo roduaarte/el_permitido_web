@@ -4,38 +4,42 @@ import pandas as pd
 import pydeck as pdk
 import random
 import time
+from datetime import datetime
+import pytz # Necesario para manejar la zona horaria correctamente
 
 # --- Configuración de la Página ---
 st.set_page_config(page_title="El Permitido", page_icon="🍦", layout="wide")
 
-# --- Datos de la Aplicación (Productos, Precios, Sabores) ---
-
-# Usar un diccionario anidado es más organizado
+# --- Datos de la Aplicación ---
 PRODUCTOS = {
     "Potes de Helado": {
         "Pote 1kg": 11000,
         "Pote 1/2kg": 7000,
-        "Pote 1/4kg": 5000, # Precio corregido para consistencia
+        "Pote 1/4kg": 5000,
     },
-    "Promos para compartir": {
-        "Promo 1kg": 11500,
-        "Promo 1kg + 1/4": 16500,
-        "Promo 1kg + 1/2": 17500,
-        "Promo 2kg": 22000,
+    "Promos para Compartir": {
+        "1Kg + 6 vasitos": 11500,
+        "1kg + 1/4 + 6 vasitos": 16500,
+        "1kg + 1/2 + 6 vasitos": 18500,
+        "2kg + 12 vasitos": 22000,
     },
-    "Conos y Vasitos": {
-        "3 conos": 1000,
-        "6 conos": 1800,
-        "6 vasitos": 1000,
-        "12 vasitos": 1800,
-    },
-    "Tortas Heladas": {
-        "Chocotorta": 2800,
-        "Torta Oreo": 3000,
-        "Torta Mixta": 3500,
-        "Tiramisú": 3300,
+    "Extras (Conos y Vasitos)": {
+        "3 Cucuruchos": 1000,
+        "6 Cucuruchos": 1800,
+        "6 Vasitos": 1000,
+        "12 Vasitos": 1800,
     }
 }
+
+# Diccionario especial para las tortas, para manejarlas con imágenes
+TORTAS = {
+    "Torta Mixta": {"precio": 20000, "img": "tortas heladas.jpg"},
+    "Chocotorta": {"precio": 20000, "img": "tortas heladas.jpg"},
+    "Torta Oreo": {"precio": 20000, "img": "tortas heladas.jpg"},
+    "Tiramisú": {"precio": 20000, "img": "tortas heladas.jpg"},
+}
+# Nota: Se usa la misma imagen para todas las tortas como placeholder.
+# Para mostrar imágenes individuales, necesitarías archivos separados para cada una.
 
 SABORES_LISTA = [
     "Americana", "Dulce de Leche", "DDL Bombón", "Súper Dulce de Leche", "DDL con Nuez",
@@ -46,124 +50,181 @@ SABORES_LISTA = [
     "Menta Granizada"
 ]
 
-# --- Estilo Visual (CSS) ---
+# --- Estilo Visual (CSS con Degradado) ---
 st.markdown("""
     <style>
         .stApp {
-            background-color: #1a1a1a; /* Un negro un poco más suave */
-            color: #fff;
+            background-image: linear-gradient(to right top, #fdd5e2, #e6d9f1, #d5def9, #cde2fb, #d0e5f9);
+            color: #333;
         }
         h1, h2, h3 {
-            color: #f72585; /* Color principal para títulos */
+            color: #7209b7;
         }
-        .st-emotion-cache-16txtl3 { /* Contenedor de widgets */
-             background-color: #2a2a2a;
-             border-radius: 10px;
-             padding: 15px !important;
+        .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
+             background-color: rgba(255, 255, 255, 0.7);
+             border-radius: 15px;
+             padding: 20px !important;
+             backdrop-filter: blur(10px);
+             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .stButton>button {
-            background-color: #7209b7;
+            background-color: #f72585;
             color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             border: none;
-            padding: 10px 20px;
-            transition: background-color 0.3s ease;
+            padding: 12px 24px;
+            font-weight: bold;
+            transition: all 0.3s ease;
         }
         .stButton>button:hover {
-            background-color: #f72585;
+            background-color: #7209b7;
+            transform: scale(1.05);
+        }
+        /* Estilo para las imágenes de las tortas */
+        .cake-container img {
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .cake-container img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
     </style>
 """, unsafe_allow_html=True)
 
 
 # --- Encabezado ---
-col1, col2 = st.columns([1, 4])
+col1, col2 = st.columns([1, 5])
 with col1:
-    # Usando la imagen local del logotipo
-    st.image("logotipo.jpg", width=150)
-
+    st.image("logotipo.jpg", width=120)
 with col2:
-    st.title("🍨 Bienvenidos a El Permitido")
-    st.write("Disfrutá nuestros helados artesanales, tortas heladas y promos para compartir.")
+    st.title("Bienvenidos a El Permitido")
+    st.write("Helados artesanales, tortas y las mejores promos para vos.")
 
 st.markdown("---")
 
-# --- NUEVA SECCIÓN: Ruleta de Sabores ---
+# --- Lógica y Visualización de la "Promo del Día" ---
+def mostrar_promo_del_dia():
+    try:
+        tz = pytz.timezone('America/Argentina/Buenos_Aires')
+        now = datetime.now(tz)
+        weekday = now.weekday()  # Lunes=0, Domingo=6
+        current_time = now.time()
+
+        happy_hour_start = datetime.strptime("17:00", "%H:%M").time()
+        happy_hour_end = datetime.strptime("20:30", "%H:%M").time()
+
+        promo_title = "🔥 PROMO DEL DÍA 🔥"
+        promo_message = ""
+        promo_emoji = "🎉"
+
+        if weekday in [2, 3]: # Miércoles y Jueves
+            dia_semana = "Miércoles" if weekday == 2 else "Jueves"
+            if happy_hour_start <= current_time <= happy_hour_end:
+                promo_title = f"¡HAPPY HOUR DE {dia_semana.upper()}!"
+                promo_message = "¡Estás a tiempo! Tenés un **15% de DESCUENTO** en el total de tu compra. ¡No te lo pierdas!"
+                promo_emoji = "🥳"
+            else:
+                promo_message = f"Hoy es {dia_semana}, y de 17:00 a 20:30hs tenés **15% OFF**. ¡Falta poco!"
+                promo_emoji = "⏳"
+        elif weekday == 4: # Viernes
+            promo_message = "¡Llegó el Viernes de 3x2! Pedí 2 potes de 1/4 y **el tercero va DE REGALO**."
+            promo_emoji = "🍦"
+        elif weekday == 5: # Sábado
+            promo_message = "¡Sábado a puro sabor! Llevate **1/2 Kg + 3 cucuruchos por solo $7.000**."
+            promo_emoji = "🙌"
+        elif weekday == 6: # Domingo
+            promo_message = "¡Domingo en familia! Disfrutá nuestra súper promo de **2 Kilos + 9 cucuruchos**."
+            promo_emoji = "👨‍👩‍👧‍👦"
+        else: # Lunes y Martes
+            promo_title = "👀 ¡Mirá la promo que se viene!"
+            promo_message = "Agendalo: este Miércoles y Jueves vuelve el Happy Hour con **15% OFF** (de 17:00 a 20:30hs)."
+            promo_emoji = "🗓️"
+
+        with st.container(border=True):
+            st.header(f"{promo_emoji} {promo_title}")
+            st.subheader(promo_message)
+
+    except Exception as e:
+        st.error(f"No se pudo cargar la promo del día: {e}")
+
+mostrar_promo_del_dia()
+st.markdown("---")
+
+# --- Ruleta de Sabores ---
 with st.container(border=True):
     st.header("🎡 ¡Ruleta de Sabores!")
-    st.write("¿No te decidís? ¡Dejá que el azar elija tu próximo sabor favorito!")
-
+    st.write("¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!")
     if st.button("¡Girar la Ruleta!"):
-        with st.spinner("Girando... 🌀"):
-            time.sleep(2) # Simula el giro
+        with st.spinner("Eligiendo un sabor increíble... 🌀"):
+            time.sleep(1.5)
         sabor_ganador = random.choice(SABORES_LISTA)
-        st.success(f"🎉 ¡Tu sabor para probar es: **{sabor_ganador}**! 🎉")
+        st.success(f"🎉 ¡Salió **{sabor_ganador}**! ¿Te animás a probarlo? 🎉")
         st.balloons()
 
 st.markdown("---")
 
-
 # --- Selección de Productos ---
 st.header("📦 Armá tu Pedido")
-
 pedido_seleccionado = {}
-total = 0
 
-# Usamos columnas para una mejor distribución
+# --- Sección de Tortas Interactivas ---
+with st.container(border=True):
+    st.subheader("Nuestras Tortas Heladas - ($20.000 c/u)")
+    st.write("Hacé clic en la torta que querés agregar a tu pedido.")
+    
+    torta_cols = st.columns(len(TORTAS))
+    for i, (nombre, data) in enumerate(TORTAS.items()):
+        with torta_cols[i]:
+            st.markdown(f"<div class='cake-container'>{st.image(data['img'], use_container_width=True)}</div>", unsafe_allow_html=True)
+            if st.checkbox(f"Agregar {nombre}", key=f"torta_{nombre}"):
+                pedido_seleccionado[nombre] = data["precio"]
+
+# --- Potes, Promos y Extras ---
 col1, col2 = st.columns(2)
-
 with col1:
     with st.container(border=True):
-        st.subheader(list(PRODUCTOS.keys())[0]) # Potes de Helado
+        st.subheader("Potes de Helado")
         for nombre, precio in PRODUCTOS["Potes de Helado"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
     
-    with st.container(border=True):
-        st.subheader(list(PRODUCTOS.keys())[2]) # Conos y Vasitos
-        for nombre, precio in PRODUCTOS["Conos y Vasitos"].items():
-            if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
-                pedido_seleccionado[nombre] = precio
-
 with col2:
     with st.container(border=True):
-        st.subheader(list(PRODUCTOS.keys())[1]) # Promos
-        for nombre, precio in PRODUCTOS["Promos para compartir"].items():
+        st.subheader("Promos para Compartir")
+        for nombre, precio in PRODUCTOS["Promos para Compartir"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
 
-    with st.container(border=True):
-        st.subheader(list(PRODUCTOS.keys())[3]) # Tortas Heladas
-        for nombre, precio in PRODUCTOS["Tortas Heladas"].items():
-            if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
-                pedido_seleccionado[nombre] = precio
-
+with st.container(border=True):
+    st.subheader("Extras")
+    for nombre, precio in PRODUCTOS["Extras (Conos y Vasitos)"].items():
+        if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
+            pedido_seleccionado[nombre] = precio
 
 # --- Selección de Sabores (si aplica) ---
 sabores_elegidos = {}
 if "Pote 1kg" in pedido_seleccionado:
-    with st.expander("🍦 Elegí los sabores para tu Pote de 1kg (hasta 4)", expanded=True):
+    with st.expander("🍦 Elegí hasta 4 sabores para tu Pote de 1kg", expanded=True):
         sabores_elegidos["1kg"] = st.multiselect("Sabores para 1kg", SABORES_LISTA, max_selections=4, key="sabores_1kg")
 if "Pote 1/2kg" in pedido_seleccionado:
-     with st.expander("🍦 Elegí los sabores para tu Pote de 1/2kg (hasta 3)", expanded=True):
+     with st.expander("🍦 Elegí hasta 3 sabores para tu Pote de 1/2kg", expanded=True):
         sabores_elegidos["1/2kg"] = st.multiselect("Sabores para 1/2kg", SABORES_LISTA, max_selections=3, key="sabores_1_2kg")
 if "Pote 1/4kg" in pedido_seleccionado:
-     with st.expander("🍦 Elegí los sabores para tu Pote de 1/4kg (hasta 2)", expanded=True):
+     with st.expander("🍦 Elegí hasta 2 sabores para tu Pote de 1/4kg", expanded=True):
         sabores_elegidos["1/4kg"] = st.multiselect("Sabores para 1/4kg", SABORES_LISTA, max_selections=2, key="sabores_1_4kg")
 
-
 # --- Resumen y Formulario de Pedido ---
-st.markdown("---")
 if pedido_seleccionado:
+    st.markdown("---")
     st.header("📝 Resumen y Envío")
     
-    # Calcular el total
     total = sum(pedido_seleccionado.values())
 
     st.subheader("Tu selección:")
     for nombre, precio in pedido_seleccionado.items():
         st.write(f"- {nombre}: ${precio:,}")
-        # Mostrar sabores elegidos para cada pote
         if nombre == "Pote 1kg" and sabores_elegidos.get("1kg"):
             st.caption(f"   Sabores: {', '.join(sabores_elegidos['1kg'])}")
         elif nombre == "Pote 1/2kg" and sabores_elegidos.get("1/2kg"):
@@ -172,21 +233,22 @@ if pedido_seleccionado:
             st.caption(f"   Sabores: {', '.join(sabores_elegidos['1/4kg'])}")
 
     st.subheader(f"Total a pagar: ${total:,}")
+    st.info("Recordá que el envío es GRATIS dentro de los 4km a la redonda.")
 
     with st.form("Datos del cliente"):
         nombre_cliente = st.text_input("Nombre y apellido")
-        direccion_cliente = st.text_input("Dirección de entrega")
-        horario_cliente = st.text_input("Horario estimado de entrega (ej: 'Lo antes posible', 'Entre 21:00 y 21:30')")
+        direccion_cliente = st.text_input("Dirección (Calle y altura)")
+        entre_calles = st.text_input("Entre calles (para ubicarte mejor)")
+        metodo_pago = st.selectbox("Método de pago", ["Efectivo", "Transferencia"])
         
-        enviar_pedido = st.form_submit_button("Generar Pedido para WhatsApp")
+        enviar_pedido = st.form_submit_button("Confirmar y Enviar Pedido por WhatsApp")
 
         if enviar_pedido:
             if not nombre_cliente or not direccion_cliente:
                 st.error("Por favor, completá tu nombre y dirección.")
             else:
-                # Construir mensaje de WhatsApp
                 mensaje_parts = [f"Hola! Soy {nombre_cliente}. Quiero hacer un pedido:"]
-                for producto, precio in pedido_seleccionado.items():
+                for producto in pedido_seleccionado:
                     mensaje_parts.append(f"- {producto}")
                     if producto == "Pote 1kg" and sabores_elegidos.get("1kg"):
                         mensaje_parts.append(f"  (Sabores: {', '.join(sabores_elegidos['1kg'])})")
@@ -194,65 +256,35 @@ if pedido_seleccionado:
                         mensaje_parts.append(f"  (Sabores: {', '.join(sabores_elegidos['1/2kg'])})")
                     elif producto == "Pote 1/4kg" and sabores_elegidos.get("1/4kg"):
                         mensaje_parts.append(f"  (Sabores: {', '.join(sabores_elegidos['1/4kg'])})")
-
+                
                 mensaje_parts.append(f"\nTotal: ${total:,}")
-                mensaje_parts.append(f"Dirección: {direccion_cliente}")
-                mensaje_parts.append(f"Horario: {horario_cliente}")
+                mensaje_parts.append(f"Dirección: {direccion_cliente} (entre {entre_calles})")
+                mensaje_parts.append(f"Método de pago: {metodo_pago}")
                 
-                mensaje_final = "\n".join(mensaje_parts)
-                url_whatsapp = "https://wa.me/5492304307444?text=" + urllib.parse.quote(mensaje_final)
+                url_whatsapp = "https://wa.me/5492304307444?text=" + urllib.parse.quote("\n".join(mensaje_parts))
                 
-                st.success("¡Pedido generado! Hacé clic en el enlace para enviarlo.")
-                st.markdown(f'## [📱 Enviar pedido por WhatsApp]({url_whatsapp})', unsafe_allow_html=True)
-else:
-    st.info("Seleccioná al menos un producto para comenzar tu pedido.")
+                st.success("¡Pedido generado! Hacé clic en el enlace para enviarlo por WhatsApp.")
+                st.markdown(f'<h2><a href="{url_whatsapp}" target="_blank" style="text-decoration: none; color: #7209b7;">📱 Enviar Pedido Ahora</a></h2>', unsafe_allow_html=True)
 
-# --- Secciones Adicionales (Imágenes, Mapa, etc.) ---
-st.markdown("---")
-st.header("📸 Nuestras Promos y Tortas")
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.image("promociones.png", caption="Nuestras promociones")
-with col2:
-    # Usando la imagen local de sabores y precios
-    st.image("sabores y precios.png", caption="Lista de precios")
-with col3:
-    # La imagen "tortas heladas.jpg" no estaba en tu lista de archivos.
-    # Si la tienes con otro nombre, puedes cambiar "tortas heladas.jpg" por el nombre correcto.
-    # st.image("tortas heladas.jpg", caption="Nuestras tortas")
-    st.info("Imagen de tortas no encontrada.")
-
-
+# --- Secciones Adicionales ---
 st.markdown("---")
 st.header("📍 Dónde Encontrarnos")
+
 col1, col2 = st.columns([2,1])
 with col1:
-    # Coordenadas de la heladería
     ubicacion_df = pd.DataFrame({'lat': [-34.4661085], 'lon': [-58.9037148]})
     st.pydeck_chart(pdk.Deck(
-        # map_style='mapbox://styles/mapbox/light-v10', # Requiere token de Mapbox
         initial_view_state=pdk.ViewState(latitude=-34.4661085, longitude=-58.9037148, zoom=16, pitch=50),
-        layers=[
-            pdk.Layer(
-                'ScatterplotLayer',
-                data=ubicacion_df,
-                get_position='[lon, lat]',
-                get_color='[247, 37, 133, 200]', # Color #f72585 con opacidad
-                get_radius=50,
-            ),
-        ],
-        tooltip={"text": "El Permitido Heladería"}
+        layers=[pdk.Layer('ScatterplotLayer', data=ubicacion_df, get_position='[lon, lat]', get_color='[247, 37, 133, 200]', get_radius=50)],
+        tooltip={"text": "El Permitido Heladería - Pilar Centro"}
     ))
 with col2:
-    direccion = "San Luis 208, Pilar Centro, Provincia de Buenos Aires"
-    enlace_google_maps = "https://www.google.com/maps/place/San+Luis+208,+Pilar+Centro,+Provincia+de+Buenos+Aires"
-    st.markdown(f"#### Dirección:")
-    st.markdown(f"### 📌 [{direccion}]({enlace_google_maps})")
+    st.markdown("#### Estamos en:")
+    st.markdown("### 📌 Pilar Centro")
+    st.markdown("##### (Calle La Pampa)")
+    st.markdown("---")
     st.markdown("#### Redes Sociales:")
-    st.markdown("[**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
-
+    st.markdown("##### [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
 
 st.markdown("---")
 st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
-
