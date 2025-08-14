@@ -70,25 +70,42 @@ st.html("""
         .font-lobster { font-family: var(--font-lobster) !important; color: var(--color-deeppink); }
         .font-berkshire { font-family: var(--font-berkshire) !important; color: var(--color-deeppink); }
         .font-ribeye { font-family: var(--font-ribeye) !important; color: var(--color-deeppink); }
-        .font-delius { font-family: var(--font-delius) !important; color: var(--color-purple); }
+        .font-delius { font-family: var(--font-delius) !important; color: var(--color-purple) !important; }
 
         /* --- ESTILOS GLOBALES PARA WIDGETS Y TEXTO --- */
-        p, div[data-testid="stExpander"] p {
-             font-family: var(--font-delius) !important;
-             color: var(--color-purple) !important;
-             font-size: 1.2rem !important;
+        /* Regla general para forzar el estilo en la mayoría de los textos */
+        div[data-testid="stAppViewContainer"] * {
+            font-family: var(--font-delius) !important;
+            color: var(--color-purple) !important;
         }
         
-        /* Estilo para etiquetas de todos los widgets, usando selectores más estables */
+        /* Estilos específicos para títulos para que usen su fuente correcta */
+        h1.font-berkshire, h1.font-lobster {
+            font-family: var(--font-berkshire) !important;
+        }
+        h1.font-lobster {
+            font-family: var(--font-lobster) !important;
+        }
+        h2.font-berkshire, h3.font-ribeye {
+            font-family: var(--font-berkshire) !important;
+            color: var(--color-deeppink) !important;
+        }
+         h3.font-ribeye {
+            font-family: var(--font-ribeye) !important;
+        }
+
+        /* Ajuste de tamaño para los textos de los productos */
         div[data-testid="stCheckbox"] label, 
         div[data-testid="stTextInput"] label, 
         div[data-testid="stSelectbox"] label,
         div[data-testid="stMultiSelect"] label,
         div[data-testid="stExpander"] summary
         {
-            font-family: var(--font-delius) !important;
-            color: var(--color-purple) !important;
-            font-size: 1.7rem !important; /* TAMAÑO AUMENTADO COMO SE SOLICITÓ */
+            font-size: 1.7rem !important;
+        }
+        
+        p.font-delius {
+            font-size: 1.4rem !important; /* Aumentado para mayor legibilidad */
         }
 
         /* Contenedores */
@@ -103,12 +120,12 @@ st.html("""
         /* Botones */
         .stButton>button {
             background-color: var(--color-deeppink);
-            color: white;
+            color: white !important;
             border-radius: 10px;
             border: none;
             padding: 12px 24px;
             font-weight: bold;
-            font-family: var(--font-berkshire); /* Usando una fuente principal para botones */
+            font-family: var(--font-berkshire) !important;
             font-size: 1.5rem !important;
             transition: all 0.3s ease;
             width: 100%;
@@ -172,7 +189,7 @@ st.markdown("---")
 # --- Ruleta de Sabores ---
 with st.container(border=True):
     st.html('<h2 class="font-berkshire" style="font-size: 3rem;">🎡 ¡Ruleta de Sabores!</h2>')
-    st.html('<p class="font-delius" style="text-align: center; font-size: 1.2rem;">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>')
+    st.html('<p class="font-delius" style="text-align: center; font-size: 1.4rem;">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>')
     if st.button("¡Girar la Ruleta!"):
         with st.spinner("Eligiendo un sabor increíble... 🌀"):
             time.sleep(1.5)
@@ -189,7 +206,7 @@ pedido_seleccionado = {}
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
     st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Nuestras Tortas Heladas</h3>')
-    st.html('<p class="font-delius" style="text-align: center;">($20.000 c/u)</p>')
+    st.html('<p class="font-delius" style="text-align: center; font-size: 1.4rem;">($20.000 c/u)</p>')
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
