@@ -73,41 +73,27 @@ st.html("""
         .font-delius { font-family: var(--font-delius) !important; color: var(--color-purple) !important; }
 
         /* --- ESTILOS GLOBALES PARA WIDGETS Y TEXTO --- */
-        /* Regla general para forzar el estilo en la mayoría de los textos */
         div[data-testid="stAppViewContainer"] * {
             font-family: var(--font-delius) !important;
             color: var(--color-purple) !important;
         }
         
-        /* Estilos específicos para títulos para que usen su fuente correcta */
-        h1.font-berkshire, h1.font-lobster {
-            font-family: var(--font-berkshire) !important;
-        }
-        h1.font-lobster {
-            font-family: var(--font-lobster) !important;
-        }
-        h2.font-berkshire, h3.font-ribeye {
-            font-family: var(--font-berkshire) !important;
-            color: var(--color-deeppink) !important;
-        }
-         h3.font-ribeye {
-            font-family: var(--font-ribeye) !important;
-        }
+        h1.font-berkshire { font-family: var(--font-berkshire) !important; }
+        h1.font-lobster { font-family: var(--font-lobster) !important; }
+        h2.font-berkshire { font-family: var(--font-berkshire) !important; color: var(--color-deeppink) !important; }
+        h3.font-ribeye { font-family: var(--font-ribeye) !important; color: var(--color-deeppink) !important; }
 
-        /* Ajuste de tamaño para los textos de los productos */
+        /* Ajuste de tamaño para los textos de los productos y descripciones */
         div[data-testid="stCheckbox"] label, 
         div[data-testid="stTextInput"] label, 
         div[data-testid="stSelectbox"] label,
         div[data-testid="stMultiSelect"] label,
-        div[data-testid="stExpander"] summary
+        div[data-testid="stExpander"] summary,
+        p.font-delius
         {
             font-size: 1.7rem !important;
         }
         
-        p.font-delius {
-            font-size: 1.4rem !important; /* Aumentado para mayor legibilidad */
-        }
-
         /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
              background-color: rgba(255, 255, 255, 0.7);
@@ -141,7 +127,7 @@ st.html("""
 # --- Encabezado ---
 col1, col2 = st.columns([1, 2])
 with col1:
-    st.image("logotipo.jpg", width=250)
+    st.image("logotipo.jpg", width=300) # Logo más grande
 with col2:
     st.html('<h1 class="font-berkshire" style="font-size: 3.5rem; margin-top: 20px;">Bienvenidos a</h1>')
     st.html('<h1 class="font-lobster" style="font-size: 5rem; margin-top: -40px;">El Permitido</h1>')
@@ -189,7 +175,7 @@ st.markdown("---")
 # --- Ruleta de Sabores ---
 with st.container(border=True):
     st.html('<h2 class="font-berkshire" style="font-size: 3rem;">🎡 ¡Ruleta de Sabores!</h2>')
-    st.html('<p class="font-delius" style="text-align: center; font-size: 1.4rem;">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>')
+    st.html('<p class="font-delius" style="text-align: center; font-size: 1.7rem;">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>')
     if st.button("¡Girar la Ruleta!"):
         with st.spinner("Eligiendo un sabor increíble... 🌀"):
             time.sleep(1.5)
@@ -206,7 +192,7 @@ pedido_seleccionado = {}
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
     st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Nuestras Tortas Heladas</h3>')
-    st.html('<p class="font-delius" style="text-align: center; font-size: 1.4rem;">($20.000 c/u)</p>')
+    st.html('<p class="font-delius" style="text-align: center; font-size: 1.7rem;">($20.000 c/u)</p>')
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
@@ -314,11 +300,11 @@ with col1:
     ))
 with col2:
     st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Estamos en:</h3>')
-    st.html('<p class="font-delius" style="font-size: 1.5rem;">📌 Pilar Centro (Calle La Pampa)</p>')
+    st.html('<p class="font-delius" style="font-size: 1.7rem;">📌 Pilar Centro (Calle La Pampa)</p>')
     st.markdown("---")
     st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Contactanos:</h3>')
-    st.html('<p class="font-delius" style="font-size: 1.2rem;">📱 <a href="https://wa.me/5492304307444" target="_blank">WhatsApp: 230-4307444</a></p>')
-    st.html('<p class="font-delius" style="font-size: 1.2rem;">📸 <a href="https://www.instagram.com/heladeria.elpermitido" target="_blank">Instagram: @heladeria.elpermitido</a></p>')
+    st.html('<p class="font-delius" style="font-size: 1.7rem;">📱 <a href="https://wa.me/5492304307444" target="_blank">WhatsApp: 230-4307444</a></p>')
+    st.html('<p class="font-delius" style="font-size: 1.7rem;">📸 <a href="https://www.instagram.com/heladeria.elpermitido" target="_blank">Instagram: @heladeria.elpermitido</a></p>')
 
 st.markdown("---")
 st.html('<p class="font-delius" style="text-align: center;">© 2025 El Permitido - Todos los derechos reservados.</p>')
