@@ -93,6 +93,13 @@ st.html("""
         {
             font-size: 2.7rem !important;
         }
+        /* Ajuste de tamaño SOLO para los textos de las opciones de checkbox */
+        div[data-testid="stCheckbox"] label,
+        div[data-testid="stCheckbox"] label p,
+        div[data-testid="stCheckbox"] label span {
+            font-size: 2.1rem !important;
+            line-height: 1.3 !important;
+        }
         
         /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
