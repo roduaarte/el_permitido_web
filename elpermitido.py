@@ -162,7 +162,7 @@ def mostrar_promo_del_dia():
 
         with st.container(border=True):
             st.html(f'<h2 class="font-berkshire" style="font-size: 3rem;">{promo_title}</h2>')
-            st.html(f'<p class="font-delius" style="text-align: center; font-size: 1.2rem;">{promo_message}</p>')
+            st.html(f'<p class="font-delius" style="text-align: center; font-size: 2.5rem;">{promo_message}</p>')
     except Exception as e:
         st.error(f"No se pudo cargar la promo del día: {e}")
 
