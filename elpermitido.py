@@ -80,16 +80,6 @@ st.markdown("""
             background-color: #7209b7;
             transform: scale(1.05);
         }
-        /* Estilo para las imágenes de las tortas */
-        .cake-container img {
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
-        .cake-container img:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -172,12 +162,13 @@ pedido_seleccionado = {}
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
     st.subheader("Nuestras Tortas Heladas - ($20.000 c/u)")
-    st.write("Hacé clic en la torta que querés agregar a tu pedido.")
+    st.write("Marcá la casilla para agregar la torta que querés a tu pedido.")
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
         with torta_cols[i]:
-            st.markdown(f"<div class='cake-container'>{st.image(data['img'], use_container_width=True)}</div>", unsafe_allow_html=True)
+            # CORRECCIÓN: Se muestra la imagen directamente, sin el st.markdown que causaba el error.
+            st.image(data['img'], use_container_width=True)
             if st.checkbox(f"Agregar {nombre}", key=f"torta_{nombre}"):
                 pedido_seleccionado[nombre] = data["precio"]
 
