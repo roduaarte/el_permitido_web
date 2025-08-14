@@ -91,7 +91,7 @@ st.html("""
         div[data-testid="stExpander"] summary,
         p.font-delius
         {
-            font-size: 1.7rem !important;
+            font-size: 2.7rem !important;
         }
         
         /* Contenedores */
@@ -107,12 +107,12 @@ st.html("""
         .stButton>button {
             background-color: var(--color-deeppink);
             color: white !important;
-            border-radius: 10px;
+            border-radius: 15px;
             border: none;
             padding: 12px 24px;
             font-weight: bold;
             font-family: var(--font-berkshire) !important;
-            font-size: 1.5rem !important;
+            font-size: 2.1rem !important;
             transition: all 0.3s ease;
             width: 100%;
         }
@@ -129,7 +129,7 @@ col1, col2 = st.columns([1, 2])
 with col1:
     st.image("logotipo.jpg", width=300) # Logo más grande
 with col2:
-    st.html('<h1 class="font-berkshire" style="font-size: 3.5rem; margin-top: 20px;">Bienvenidos a</h1>')
+    st.html('<h1 class="font-berkshire" style="font-size: 4.5rem; margin-top: 20px;">Bienvenidos a</h1>')
     st.html('<h1 class="font-lobster" style="font-size: 5rem; margin-top: -40px;">El Permitido</h1>')
 
 st.markdown("---")
