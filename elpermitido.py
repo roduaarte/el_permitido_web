@@ -48,35 +48,29 @@ SABORES_LISTA = [
 ]
 
 # --- Estilo Visual (CSS con Fuentes y Colores Personalizados) ---
-# Se utiliza st.html para una carga más robusta de las fuentes y estilos.
 st.html("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Pacifico&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Lobster&family=Berkshire+Swash&family=Ribeye&family=Delius&display=swap');
 
         /* Variables de Estilo */
         :root {
-            --font-kawthar-like: 'Pacifico', cursive;
-            --font-lucidity-like: 'Oswald', sans-serif;
+            --font-lobster: 'Lobster', cursive;
+            --font-berkshire: 'Berkshire Swash', cursive;
+            --font-ribeye: 'Ribeye', cursive;
+            --font-delius: 'Delius', cursive;
             --color-deeppink: #FF1493;
-            --color-purple: #8A2BE2; /* BlueViolet */
+            --color-purple: #8A2BE2;
         }
 
-        /* Estilo general del cuerpo y la fuente */
         .stApp {
             background-image: linear-gradient(to right top, #fdd5e2, #e6d9f1, #d5def9, #cde2fb, #d0e5f9);
         }
         
-        /* Estilos aplicados globalmente a los elementos de Streamlit */
-        h1, h2, h3 {
-            font-family: var(--font-kawthar-like) !important;
-            color: var(--color-deeppink) !important;
-            text-align: center;
-        }
-
-        p, label, .st-emotion-cache-16txtl3, .st-emotion-cache-1r4qj8v {
-            font-family: var(--font-lucidity-like) !important;
-            color: var(--color-purple) !important;
-        }
+        /* --- CLASES DE FUENTE ESPECÍFICAS --- */
+        .font-lobster { font-family: var(--font-lobster) !important; color: var(--color-deeppink); }
+        .font-berkshire { font-family: var(--font-berkshire) !important; color: var(--color-deeppink); }
+        .font-ribeye { font-family: var(--font-ribeye) !important; color: var(--color-deeppink); }
+        .font-delius { font-family: var(--font-delius) !important; color: var(--color-purple); }
 
         /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
@@ -95,7 +89,8 @@ st.html("""
             border: none;
             padding: 12px 24px;
             font-weight: bold;
-            font-family: var(--font-kawthar-like);
+            font-family: var(--font-berkshire); /* Usando una fuente principal para botones */
+            font-size: 1.5rem !important;
             transition: all 0.3s ease;
             width: 100%;
         }
@@ -103,17 +98,24 @@ st.html("""
             background-color: var(--color-purple);
             transform: scale(1.05);
         }
+        
+        /* Aplicar fuente secundaria a las etiquetas de los checkboxes y otros elementos */
+        label, .st-emotion-cache-1y4p8pa, .st-emotion-cache-zz6sex, .st-emotion-cache-10trblm {
+            font-family: var(--font-delius) !important;
+            color: var(--color-purple) !important;
+            font-size: 1.1rem !important;
+        }
     </style>
 """)
 
 
 # --- Encabezado ---
-col1, col2 = st.columns([1, 3]) # Columnas ajustadas para mejor proporción
+col1, col2 = st.columns([1, 2])
 with col1:
-    st.image("logotipo.jpg", width=180) # Tamaño del logo aumentado
+    st.image("logotipo.jpg", width=250)
 with col2:
-    st.title("Bienvenidos a El Permitido!")
-    st.subheader("Helados artesanales, tortas y las mejores promos para vos!")
+    st.html('<h1 class="font-berkshire" style="font-size: 3.5rem; margin-top: 20px;">Bienvenidos a</h1>')
+    st.html('<h1 class="font-lobster" style="font-size: 5rem; margin-top: -40px;">El Permitido</h1>')
 
 st.markdown("---")
 
@@ -147,8 +149,8 @@ def mostrar_promo_del_dia():
             promo_message = "Agendalo: este Miércoles y Jueves vuelve el Happy Hour con **15% OFF** (de 17:00 a 20:30hs)."
 
         with st.container(border=True):
-            st.header(promo_title)
-            st.write(promo_message)
+            st.html(f'<h2 class="font-berkshire" style="font-size: 3rem;">{promo_title}</h2>')
+            st.html(f'<p class="font-delius" style="text-align: center; font-size: 1.2rem;">{promo_message}</p>')
     except Exception as e:
         st.error(f"No se pudo cargar la promo del día: {e}")
 
@@ -157,8 +159,8 @@ st.markdown("---")
 
 # --- Ruleta de Sabores ---
 with st.container(border=True):
-    st.header("🎡 ¡Ruleta de Sabores!")
-    st.write("¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!")
+    st.html('<h2 class="font-berkshire" style="font-size: 3rem;">🎡 ¡Ruleta de Sabores!</h2>')
+    st.html('<p class="font-delius" style="text-align: center; font-size: 1.2rem;">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>')
     if st.button("¡Girar la Ruleta!"):
         with st.spinner("Eligiendo un sabor increíble... 🌀"):
             time.sleep(1.5)
@@ -169,12 +171,13 @@ with st.container(border=True):
 st.markdown("---")
 
 # --- Selección de Productos ---
-st.header("📦 Armá tu Pedido")
+st.html('<h2 class="font-berkshire" style="font-size: 3rem;">📦 Armá tu Pedido</h2>')
 pedido_seleccionado = {}
 
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
-    st.subheader("Nuestras Tortas Heladas - ($20.000 c/u)")
+    st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Nuestras Tortas Heladas</h3>')
+    st.html('<p class="font-delius" style="text-align: center;">($20.000 c/u)</p>')
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
@@ -187,20 +190,20 @@ with st.container(border=True):
 col1, col2 = st.columns(2)
 with col1:
     with st.container(border=True):
-        st.subheader("Potes de Helado")
+        st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Potes de Helado</h3>')
         for nombre, precio in PRODUCTOS["Potes de Helado"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
     
 with col2:
     with st.container(border=True):
-        st.subheader("Promos")
+        st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Promos</h3>')
         for nombre, precio in PRODUCTOS["Promos para Compartir"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
 
 with st.container(border=True):
-    st.subheader("Extras")
+    st.html('<h3 class="font-ribeye" style="text-align: center; font-size: 2.2rem;">Extras</h3>')
     for nombre, precio in PRODUCTOS["Extras (Conos y Vasitos)"].items():
         if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
             pedido_seleccionado[nombre] = precio
@@ -220,21 +223,21 @@ if "Pote 1/4kg" in pedido_seleccionado:
 # --- Resumen y Formulario de Pedido ---
 if pedido_seleccionado:
     st.markdown("---")
-    st.header("📝 Resumen y Envío")
+    st.html('<h2 class="font-berkshire" style="font-size: 3rem;">📝 Resumen y Envío</h2>')
     
     total = sum(pedido_seleccionado.values())
 
-    st.subheader("Tu selección:")
+    st.html('<h3 class="font-ribeye" style="font-size: 2.2rem;">Tu selección:</h3>')
     for nombre, precio in pedido_seleccionado.items():
-        st.write(f"- {nombre}: ${precio:,}")
+        st.html(f'<p class="font-delius">- {nombre}: ${precio:,}</p>')
         if nombre == "Pote 1kg" and sabores_elegidos.get("1kg"):
-            st.caption(f"   Sabores: {', '.join(sabores_elegidos['1kg'])}")
+            st.html(f'<p class="font-delius" style="padding-left: 20px;">Sabores: {", ".join(sabores_elegidos["1kg"])}</p>')
         elif nombre == "Pote 1/2kg" and sabores_elegidos.get("1/2kg"):
-            st.caption(f"   Sabores: {', '.join(sabores_elegidos['1/2kg'])}")
+            st.html(f'<p class="font-delius" style="padding-left: 20px;">Sabores: {", ".join(sabores_elegidos["1/2kg"])}</p>')
         elif nombre == "Pote 1/4kg" and sabores_elegidos.get("1/4kg"):
-            st.caption(f"   Sabores: {', '.join(sabores_elegidos['1/4kg'])}")
+            st.html(f'<p class="font-delius" style="padding-left: 20px;">Sabores: {", ".join(sabores_elegidos["1/4kg"])}</p>')
 
-    st.subheader(f"Total a pagar: ${total:,}")
+    st.html(f'<h3 class="font-ribeye" style="font-size: 2.2rem;">Total a pagar: ${total:,}</h3>')
     st.info("Recordá que el envío es GRATIS dentro de los 4km a la redonda.")
 
     with st.form("Datos del cliente"):
@@ -266,11 +269,11 @@ if pedido_seleccionado:
                 url_whatsapp = "https://wa.me/5492304307444?text=" + urllib.parse.quote("\n".join(mensaje_parts))
                 
                 st.success("¡Pedido generado! Hacé clic en el enlace para enviarlo por WhatsApp.")
-                st.markdown(f'<h2><a href="{url_whatsapp}" target="_blank" style="text-decoration: none; color: #7209b7;">📱 Enviar Pedido Ahora</a></h2>', unsafe_allow_html=True)
+                st.html(f'<h2><a href="{url_whatsapp}" target="_blank" style="text-decoration: none; color: #7209b7; font-family: var(--font-berkshire);">📱 Enviar Pedido Ahora</a></h2>')
 
 # --- Secciones Adicionales ---
 st.markdown("---")
-st.header("📍 Dónde Encontrarnos y Contacto")
+st.html('<h2 class="font-berkshire" style="font-size: 3rem;">📍 Dónde Encontrarnos y Contacto</h2>')
 
 col1, col2 = st.columns([2,1])
 with col1:
@@ -281,13 +284,12 @@ with col1:
         tooltip={"text": "El Permitido Heladería - Pilar Centro"}
     ))
 with col2:
-    st.subheader("Estamos en:")
-    st.write("#### 📌 Pilar Centro")
-    st.write("##### (Calle La Pampa)")
+    st.html('<h3 class="font-ribeye" style="font-size: 2.2rem;">Estamos en:</h3>')
+    st.html('<p class="font-delius" style="font-size: 1.5rem;">📌 Pilar Centro (Calle La Pampa)</p>')
     st.markdown("---")
-    st.subheader("Contactanos:")
-    st.write("##### 📱 [**WhatsApp: 230-4307444**](https://wa.me/5492304307444)")
-    st.write("##### 📸 [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
+    st.html('<h3 class="font-ribeye" style="font-size: 2.2rem;">Contactanos:</h3>')
+    st.html('<p class="font-delius" style="font-size: 1.2rem;">📱 <a href="https://wa.me/5492304307444" target="_blank">WhatsApp: 230-4307444</a></p>')
+    st.html('<p class="font-delius" style="font-size: 1.2rem;">📸 <a href="https://www.instagram.com/heladeria.elpermitido" target="_blank">Instagram: @heladeria.elpermitido</a></p>')
 
 st.markdown("---")
-st.write("© 2025 El Permitido - Todos los derechos reservados.")
+st.html('<p class="font-delius" style="text-align: center;">© 2025 El Permitido - Todos los derechos reservados.</p>')
