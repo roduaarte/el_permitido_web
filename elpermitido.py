@@ -31,7 +31,6 @@ PRODUCTOS = {
     }
 }
 
-# --- ACTUALIZADO: Diccionario de tortas con sus imágenes individuales ---
 TORTAS = {
     "Torta Mixta": {"precio": 20000, "img": "Mixta.png"},
     "Chocotorta": {"precio": 20000, "img": "Chocotorta.png"},
@@ -48,16 +47,42 @@ SABORES_LISTA = [
     "Menta Granizada"
 ]
 
-# --- Estilo Visual (CSS con Degradado) ---
+# --- Estilo Visual (CSS con Fuentes y Colores Personalizados) ---
 st.markdown("""
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500&family=Pacifico&display=swap');
+
+        /* Variables de Estilo */
+        :root {
+            --font-kawthar-like: 'Pacifico', cursive;
+            --font-lucidity-like: 'Oswald', sans-serif;
+            --color-deeppink: #FF1493;
+            --color-purple: #8A2BE2; /* Un morado más vibrante (BlueViolet) */
+        }
+
         .stApp {
             background-image: linear-gradient(to right top, #fdd5e2, #e6d9f1, #d5def9, #cde2fb, #d0e5f9);
-            color: #7209b7; /* Color principal del texto cambiado a morado oscuro para legibilidad */
+            font-family: var(--font-lucidity-like);
+            color: var(--color-purple);
         }
-        h1, h2, h3 {
-            color: #f72585; /* Títulos en fucsia como pediste */
+
+        /* Estilos para Títulos Principales */
+        .main-title, .section-title {
+            font-family: var(--font-kawthar-like);
+            color: var(--color-deeppink);
+            text-align: center;
         }
+        .main-title { font-size: 3.5rem; }
+        .section-title { font-size: 2.5rem; }
+
+        /* Estilo para Subtítulos y Texto General */
+        .subtitle, p, .st-emotion-cache-16txtl3 label, .st-emotion-cache-1r4qj8v label {
+            font-family: var(--font-lucidity-like);
+            color: var(--color-purple) !important;
+        }
+        .subtitle { font-size: 1.2rem; text-align: center; }
+
+        /* Contenedores */
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
              background-color: rgba(255, 255, 255, 0.7);
              border-radius: 15px;
@@ -65,17 +90,21 @@ st.markdown("""
              backdrop-filter: blur(10px);
              border: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        /* Botones */
         .stButton>button {
-            background-color: #f72585;
+            background-color: var(--color-deeppink);
             color: white;
             border-radius: 10px;
             border: none;
             padding: 12px 24px;
             font-weight: bold;
+            font-family: var(--font-kawthar-like);
             transition: all 0.3s ease;
+            width: 100%;
         }
         .stButton>button:hover {
-            background-color: #7209b7;
+            background-color: var(--color-purple);
             transform: scale(1.05);
         }
     </style>
@@ -87,53 +116,44 @@ col1, col2 = st.columns([1, 5])
 with col1:
     st.image("logotipo.jpg", width=120)
 with col2:
-    st.title("Bienvenidos a El Permitido")
-    st.write("Helados artesanales, tortas y las mejores promos para vos.")
+    st.markdown('<h1 class="main-title">Bienvenidos a El Permitido!</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Helados artesanales, tortas y las mejores promos para vos!</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# --- Lógica y Visualización de la "Promo del Día" ---
+# --- Promo del Día ---
 def mostrar_promo_del_dia():
+    # (La lógica interna de la función no cambia)
     try:
         tz = pytz.timezone('America/Argentina/Buenos_Aires')
         now = datetime.now(tz)
-        weekday = now.weekday()  # Lunes=0, Domingo=6
+        weekday = now.weekday()
         current_time = now.time()
-
         happy_hour_start = datetime.strptime("17:00", "%H:%M").time()
         happy_hour_end = datetime.strptime("20:30", "%H:%M").time()
-
-        promo_title = "🔥 PROMO DEL DÍA 🔥"
+        promo_title = "PROMO DEL DÍA 🔥"
         promo_message = ""
-        promo_emoji = "🎉"
 
-        if weekday in [2, 3]: # Miércoles y Jueves
+        if weekday in [2, 3]:
             dia_semana = "Miércoles" if weekday == 2 else "Jueves"
             if happy_hour_start <= current_time <= happy_hour_end:
-                promo_title = f"¡HAPPY HOUR DE {dia_semana.upper()}!"
+                promo_title = f"HAPPY HOUR DE {dia_semana.upper()}!"
                 promo_message = "¡Estás a tiempo! Tenés un **15% de DESCUENTO** en el total de tu compra. ¡No te lo pierdas!"
-                promo_emoji = "🥳"
             else:
                 promo_message = f"Hoy es {dia_semana}, y de 17:00 a 20:30hs tenés **15% OFF**. ¡Falta poco!"
-                promo_emoji = "⏳"
-        elif weekday == 4: # Viernes
+        elif weekday == 4:
             promo_message = "¡Llegó el Viernes de 3x2! Pedí 2 potes de 1/4 y **el tercero va DE REGALO**."
-            promo_emoji = "🍦"
-        elif weekday == 5: # Sábado
+        elif weekday == 5:
             promo_message = "¡Sábado a puro sabor! Llevate **1/2 Kg + 3 cucuruchos por solo $7.000**."
-            promo_emoji = "🙌"
-        elif weekday == 6: # Domingo
+        elif weekday == 6:
             promo_message = "¡Domingo en familia! Disfrutá nuestra súper promo de **2 Kilos + 9 cucuruchos**."
-            promo_emoji = "👨‍👩‍👧‍👦"
-        else: # Lunes y Martes
-            promo_title = "👀 ¡Mirá la promo que se viene!"
+        else:
+            promo_title = "¡Mirá la promo que se viene!"
             promo_message = "Agendalo: este Miércoles y Jueves vuelve el Happy Hour con **15% OFF** (de 17:00 a 20:30hs)."
-            promo_emoji = "🗓️"
 
         with st.container(border=True):
-            st.header(f"{promo_emoji} {promo_title}")
-            st.subheader(promo_message)
-
+            st.markdown(f'<h2 class="section-title">{promo_title}</h2>', unsafe_allow_html=True)
+            st.markdown(f'<p class="subtitle" style="text-align:center;">{promo_message}</p>', unsafe_allow_html=True)
     except Exception as e:
         st.error(f"No se pudo cargar la promo del día: {e}")
 
@@ -142,8 +162,8 @@ st.markdown("---")
 
 # --- Ruleta de Sabores ---
 with st.container(border=True):
-    st.header("🎡 ¡Ruleta de Sabores!")
-    st.write("¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!")
+    st.markdown('<h2 class="section-title">🎡 ¡Ruleta de Sabores!</h2>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">¿Indeciso/a? ¡Dejá que el azar elija por vos y sorprendete!</p>', unsafe_allow_html=True)
     if st.button("¡Girar la Ruleta!"):
         with st.spinner("Eligiendo un sabor increíble... 🌀"):
             time.sleep(1.5)
@@ -154,13 +174,13 @@ with st.container(border=True):
 st.markdown("---")
 
 # --- Selección de Productos ---
-st.header("📦 Armá tu Pedido")
+st.markdown('<h2 class="section-title">📦 Armá tu Pedido</h2>', unsafe_allow_html=True)
 pedido_seleccionado = {}
 
 # --- Sección de Tortas Interactivas ---
 with st.container(border=True):
-    st.subheader("Nuestras Tortas Heladas - ($20.000 c/u)")
-    st.write("Marcá la casilla para agregar la torta que querés a tu pedido.")
+    st.markdown('<h3 class="section-title" style="font-size: 2rem;">Nuestras Tortas Heladas</h3>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle" style="margin-top:-15px;">($20.000 c/u)</p>', unsafe_allow_html=True)
     
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
@@ -173,25 +193,26 @@ with st.container(border=True):
 col1, col2 = st.columns(2)
 with col1:
     with st.container(border=True):
-        st.subheader("Potes de Helado")
+        st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Potes de Helado</h3>', unsafe_allow_html=True)
         for nombre, precio in PRODUCTOS["Potes de Helado"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
     
 with col2:
     with st.container(border=True):
-        st.subheader("Promos para Compartir")
+        st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Promos</h3>', unsafe_allow_html=True)
         for nombre, precio in PRODUCTOS["Promos para Compartir"].items():
             if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
                 pedido_seleccionado[nombre] = precio
 
 with st.container(border=True):
-    st.subheader("Extras")
+    st.markdown('<h3 class="section-title" style="font-size: 1.8rem;">Extras</h3>', unsafe_allow_html=True)
     for nombre, precio in PRODUCTOS["Extras (Conos y Vasitos)"].items():
         if st.checkbox(f"{nombre} - ${precio:,}", key=nombre):
             pedido_seleccionado[nombre] = precio
 
 # --- Selección de Sabores (si aplica) ---
+# (La lógica interna no cambia)
 sabores_elegidos = {}
 if "Pote 1kg" in pedido_seleccionado:
     with st.expander("🍦 Elegí hasta 4 sabores para tu Pote de 1kg", expanded=True):
@@ -206,11 +227,11 @@ if "Pote 1/4kg" in pedido_seleccionado:
 # --- Resumen y Formulario de Pedido ---
 if pedido_seleccionado:
     st.markdown("---")
-    st.header("📝 Resumen y Envío")
+    st.markdown('<h2 class="section-title">📝 Resumen y Envío</h2>', unsafe_allow_html=True)
     
     total = sum(pedido_seleccionado.values())
 
-    st.subheader("Tu selección:")
+    st.markdown(f"### Tu selección:")
     for nombre, precio in pedido_seleccionado.items():
         st.write(f"- {nombre}: ${precio:,}")
         if nombre == "Pote 1kg" and sabores_elegidos.get("1kg"):
@@ -220,7 +241,7 @@ if pedido_seleccionado:
         elif nombre == "Pote 1/4kg" and sabores_elegidos.get("1/4kg"):
             st.caption(f"   Sabores: {', '.join(sabores_elegidos['1/4kg'])}")
 
-    st.subheader(f"Total a pagar: ${total:,}")
+    st.markdown(f"### Total a pagar: ${total:,}")
     st.info("Recordá que el envío es GRATIS dentro de los 4km a la redonda.")
 
     with st.form("Datos del cliente"):
@@ -235,6 +256,7 @@ if pedido_seleccionado:
             if not nombre_cliente or not direccion_cliente:
                 st.error("Por favor, completá tu nombre y dirección.")
             else:
+                # (La lógica de creación del mensaje no cambia)
                 mensaje_parts = [f"Hola! Soy {nombre_cliente}. Quiero hacer un pedido:"]
                 for producto in pedido_seleccionado:
                     mensaje_parts.append(f"- {producto}")
@@ -256,14 +278,14 @@ if pedido_seleccionado:
 
 # --- Secciones Adicionales ---
 st.markdown("---")
-st.header("📍 Dónde Encontrarnos y Contacto")
+st.markdown('<h2 class="section-title">📍 Dónde Encontrarnos y Contacto</h2>', unsafe_allow_html=True)
 
 col1, col2 = st.columns([2,1])
 with col1:
     ubicacion_df = pd.DataFrame({'lat': [-34.4661085], 'lon': [-58.9037148]})
     st.pydeck_chart(pdk.Deck(
         initial_view_state=pdk.ViewState(latitude=-34.4661085, longitude=-58.9037148, zoom=16, pitch=50),
-        layers=[pdk.Layer('ScatterplotLayer', data=ubicacion_df, get_position='[lon, lat]', get_color='[247, 37, 133, 200]', get_radius=50)],
+        layers=[pdk.Layer('ScatterplotLayer', data=ubicacion_df, get_position='[lon, lat]', get_color='[255, 20, 147, 200]', get_radius=50)], # Color deeppink
         tooltip={"text": "El Permitido Heladería - Pilar Centro"}
     ))
 with col2:
@@ -272,9 +294,8 @@ with col2:
     st.markdown("##### (Calle La Pampa)")
     st.markdown("---")
     st.markdown("#### Contactanos:")
-    # --- ACTUALIZADO: Se agrega el teléfono de contacto ---
     st.markdown("##### 📱 [**WhatsApp: 230-4307444**](https://wa.me/5492304307444)")
     st.markdown("##### 📸 [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
 
 st.markdown("---")
-st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
+st.markdown('<p class="subtitle" style="text-align:center;">© 2025 El Permitido - Todos los derechos reservados.</p>', unsafe_allow_html=True)
