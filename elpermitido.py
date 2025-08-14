@@ -31,15 +31,13 @@ PRODUCTOS = {
     }
 }
 
-# Diccionario especial para las tortas, para manejarlas con imágenes
+# --- ACTUALIZADO: Diccionario de tortas con sus imágenes individuales ---
 TORTAS = {
-    "Torta Mixta": {"precio": 20000, "img": "tortas heladas.jpg"},
-    "Chocotorta": {"precio": 20000, "img": "tortas heladas.jpg"},
-    "Torta Oreo": {"precio": 20000, "img": "tortas heladas.jpg"},
-    "Tiramisú": {"precio": 20000, "img": "tortas heladas.jpg"},
+    "Torta Mixta": {"precio": 20000, "img": "Mixta.png"},
+    "Chocotorta": {"precio": 20000, "img": "Chocotorta.png"},
+    "Torta Oreo": {"precio": 20000, "img": "Oreo.png"},
+    "Tiramisú": {"precio": 20000, "img": "Tiramisú.png"},
 }
-# Nota: Se usa la misma imagen para todas las tortas como placeholder.
-# Para mostrar imágenes individuales, necesitarías archivos separados para cada una.
 
 SABORES_LISTA = [
     "Americana", "Dulce de Leche", "DDL Bombón", "Súper Dulce de Leche", "DDL con Nuez",
@@ -55,10 +53,10 @@ st.markdown("""
     <style>
         .stApp {
             background-image: linear-gradient(to right top, #fdd5e2, #e6d9f1, #d5def9, #cde2fb, #d0e5f9);
-            color: #333;
+            color: #7209b7; /* Color principal del texto cambiado a morado oscuro para legibilidad */
         }
         h1, h2, h3 {
-            color: #7209b7;
+            color: #f72585; /* Títulos en fucsia como pediste */
         }
         .st-emotion-cache-16txtl3, .st-emotion-cache-1jicfl2, .st-emotion-cache-1r4qj8v {
              background-color: rgba(255, 255, 255, 0.7);
@@ -167,8 +165,7 @@ with st.container(border=True):
     torta_cols = st.columns(len(TORTAS))
     for i, (nombre, data) in enumerate(TORTAS.items()):
         with torta_cols[i]:
-            # CORRECCIÓN: Se muestra la imagen directamente, sin el st.markdown que causaba el error.
-            st.image(data['img'], use_container_width=True)
+            st.image(data['img'], use_container_width=True, caption=nombre)
             if st.checkbox(f"Agregar {nombre}", key=f"torta_{nombre}"):
                 pedido_seleccionado[nombre] = data["precio"]
 
@@ -259,7 +256,7 @@ if pedido_seleccionado:
 
 # --- Secciones Adicionales ---
 st.markdown("---")
-st.header("📍 Dónde Encontrarnos")
+st.header("📍 Dónde Encontrarnos y Contacto")
 
 col1, col2 = st.columns([2,1])
 with col1:
@@ -274,8 +271,10 @@ with col2:
     st.markdown("### 📌 Pilar Centro")
     st.markdown("##### (Calle La Pampa)")
     st.markdown("---")
-    st.markdown("#### Redes Sociales:")
-    st.markdown("##### [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
+    st.markdown("#### Contactanos:")
+    # --- ACTUALIZADO: Se agrega el teléfono de contacto ---
+    st.markdown("##### 📱 [**WhatsApp: 230-4307444**](https://wa.me/5492304307444)")
+    st.markdown("##### 📸 [**Instagram:** @heladeria.elpermitido](https://www.instagram.com/heladeria.elpermitido)")
 
 st.markdown("---")
 st.markdown("© 2025 El Permitido - Todos los derechos reservados.")
